@@ -1,0 +1,12 @@
+# Instaloader saved sessions (contain your login cookies — never commit these!)
+*.session
+session-*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
