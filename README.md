@@ -1,111 +1,127 @@
-# IG Unfollow Checker
+# 🔍 IG Unfollow Checker
 
-A small desktop tool that checks who you follow on Instagram but who doesn't follow you back.
+**Instagram'da seni geri takip etmeyenleri bul ve tek tıkla takipten çık!**
 
-It runs **entirely on your own computer**. Your credentials/cookies are never sent anywhere except directly to Instagram's own servers.
+> 🛡️ %100 güvenli — tüm işlemler bilgisayarında çalışır, verilerin paylaşılır mı?
 
-## Features
+[![Python](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)]()
 
-- Login via username + password, **or** via your browser's cookie (no password needed)
-- Handles 2FA (two-factor authentication) prompts
-- Shows the list of non-mutual follows in a simple GUI, with pagination
-- **One-click Unfollow button** next to each account in the results
-- Export the result to a `.txt` file
+---
 
-## How it works under the hood
+## ✨ Özellikler
 
-- Resolving your user ID uses [instaloader](https://github.com/instaloader/instaloader), which talks to Instagram's web **GraphQL** endpoint.
-- Fetching your followers/following list and unfollowing both go through Instagram's **private API** (`/api/v1/friendships/...`), the same endpoints the official Instagram app uses.
-- Both require you to be authenticated, which is why a cookie or password is needed.
+| Özellik | Açıklama |
+|---------|----------|
+| 🔐 **Cookie veya Şifre** | Tarayıcıdan cookie kopyala veya şifre ile giriş yap |
+| 🛡️ **2FA Desteği** | İki faktörlü doğrulama kodunu gir |
+| 📊 **Gelişmiş Liste** | Takip ettiğin ama seni geri takip etmeyenleri göster |
+| 🚀 **Tek Tıkla Unfollow** | Her kişinin yanında "Takipten Çık" butonu |
+| 📄 **TXT Dışa Aktar** | Listeyi dosyaya kaydet |
+| 📱 **Sayfalama** | Uzun listelerde kolayca gezin |
+| 🖥️ **Desktop GUI** | Tkinter ile güzel arayüz |
 
-## ⚠️ Disclaimer
+## 🚀 Hızlı Başlangıç
 
-- This project is **not affiliated with, endorsed by, or connected to Instagram/Meta** in any way.
-- Automating access to Instagram is against Instagram's Terms of Service. Using this tool may result in temporary action blocks or, in rare cases, account restrictions. Use at your own risk, on your own account only.
-- **Unfollowing is a "write" action**, not just reading data — Instagram's bot detection is more sensitive to write actions. Avoid unfollowing many accounts back-to-back in a short time; doing too many too fast is the most common way to trigger an `Action Blocked` (temporary lock on follow/unfollow for ~24-48h).
-- Don't run this more than once a day. Don't share your cookie or password with anyone — they grant full access to your account, just like a password does.
+### Kurulum
 
-## Requirements
+```bash
+git clone https://github.com/mmustafasenoglu/ig-unfollow-checker.git
+cd ig-unfollow-checker
+pip install -r requirements.txt
+```
 
-- Python 3.9+
-- `pip install -r requirements.txt`
-
-## Usage
+### Çalıştırma
 
 ```bash
 python insta.py
 ```
 
-A window will open asking for your username, and then **either**:
-1. A full cookie string, or a pasted `cURL` command (recommended), **or**
-2. Your password
+## 📖 Kullanım
 
-### Option A — Login with cookie (recommended)
+### Yöntem 1 — Cookie ile Giriş (Önerilen)
 
-This method never requires typing your password into the script. Instead, you copy a logged-in request from a browser where you're already signed into Instagram, and paste it into the **"Full Cookie"** field. The app accepts either:
-- A full `curl ...` command copied straight from your browser's Network tab (the app automatically extracts the `Cookie:` header from it), **or**
-- Just the raw cookie string itself (e.g. `sessionid=...; csrftoken=...; ds_user_id=...`)
+1. [instagram.com](https://www.instagram.com)'a giriş yap
+2. Tarayıcıda DevTools'u aç (`Cmd+Option+I` / `Ctrl+Shift+I`)
+3. **Network** sekmesine git
+4. Herhangi bir Instagram isteğine sağ tıkla → **Copy as cURL**
+5. Uygulamadaki "Tüm Cookie" alanına yapıştır
 
-#### How to get it on **Chrome**
+### Yöntem 2 — Şifre ile Giriş
 
-1. Open [instagram.com](https://www.instagram.com) and make sure you're logged in.
-2. Open DevTools (`Cmd+Option+I` on Mac / `Ctrl+Shift+I` on Windows) and go to the **Network** tab.
-3. Reload the page, or click on your own profile, so new requests show up in the list.
-4. Find any request to `www.instagram.com` (e.g. one with `graphql` or `friendships` in the name).
-5. Right-click it → **Copy** → **Copy as cURL** (bash).
-6. Paste the entire thing into the "Full Cookie" field in the app.
+Cookie alanını boş bırak, sadece şifreni gir. 2FA aktifse kodu gir.
 
-#### How to get it on **Safari**
-
-1. Open [instagram.com](https://www.instagram.com) and make sure you're logged in.
-2. Enable the Develop menu first (if not already): `Safari → Settings → Advanced → Show features for web developers`.
-3. Open `Develop → Show Web Inspector` (`Cmd+Option+I`) and go to the **Network** tab.
-4. Reload the page, or click on your own profile, so new requests show up.
-5. Find a request with `graphql` in the name, right-click it → **Copy as cURL**.
-6. Paste the entire thing into the "Full Cookie" field in the app.
-
-> Note: this cookie/curl snapshot is tied to your login session. If you log out of Instagram in that browser, it becomes invalid and you'll need to copy a fresh one.
-
-### Option B — Login with username + password
-
-Just leave the "Full Cookie" field empty and enter your password instead. If you have 2FA enabled, a popup will ask for the code sent to your phone/email.
-
-## Interface
-
-The app is a simple desktop window (Tkinter) with:
-
-- **Username** field
-- **Full Cookie** field (optional — see "Option A" above)
-- **Password** field (optional — see "Option B" above)
-- **"Find non-followers" button** — starts the check
-- **Status label** — shows progress (`Logging in...`, `Fetching followers...`, `Fetching following...`, `Done.`)
-- **Results list** — once finished, shows, for each non-mutual account:
-  - Their username
-  - An **"Unfollow"** button next to them
-- **Pagination controls** (`<< Previous` / `Next >>`) since the list can be long
-- **"Save all results as .txt" button** — exports the full results list to a text file on your computer
-
-Example header shown above the results list:
+## 📸 Ekran Görüntüsü
 
 ```
-Following: 412 | Followers: 387
-Accounts that don't follow you back: 58
-Showing: 1 - 30
+┌─────────────────────────────────────────┐
+│  Instagram - Geri Takip Etmeyenler      │
+│                                         │
+│  Kullanıcı adı: [________________]      │
+│  Tüm Cookie:    [________________]      │
+│  Şifre:         [________________]      │
+│                                         │
+│  [🔍 Geri Takip Etmeyenleri Bul]       │
+│                                         │
+│  Takip ettiğin: 412 | Takipçin: 387    │
+│  Seni geri takip etmeyenler: 58 kişi    │
+│                                         │
+│  1. @kullanici1          [Takipten Çık] │
+│  2. @kullanici2          [Takipten Çık] │
+│  3. @kullanici3          [Takipten Çık] │
+│                                         │
+│  << Önceki    Sayfa: 1/2    Sonraki >>  │
+│                          [💾 Kaydet]    │
+└─────────────────────────────────────────┘
 ```
 
-## Project structure
+## 🔒 Gizlilik ve Güvenlik
+
+- ✅ Tüm istekler **sadece senin bilgisayarından** Instagram sunucularına gider
+- ✅ Hiçbir veri üçüncü taraf sunucuya gönderilmez
+- ✅ Cookie/sifren asla paylaşılmaz
+- ⚠️ Cookie, şifren kadar hassastır — kimseyle paylaşma
+
+## ⚠️ Sorumluluk Reddi
+
+- Bu proje **Instagram/Meta ile bağlantılı değildir**
+- Instagram'ın Hizmet Şartları'nı otomatik erişim **yasaklar**
+- Hesabında geçici engelleme veya askıya alma yaşanabilir
+- Günde 1'den fazla çalıştırma
+- Çok fazla kişiyi hızlıca takipten çıkma → `Action Blocked` (24-48 saat)
+- **Kendi hesabında, kendi sorumluluğunda kullan**
+
+## 🛠️ Teknolojiler
+
+- **Python 3.9+**
+- **Tkinter** — Desktop GUI
+- **Instaloader** — Instagram GraphQL API
+- **Requests** — Instagram Private API
+
+## 📁 Proje Yapısı
 
 ```
-insta.py            # main app (GUI + Instagram logic)
-requirements.txt     # Python dependencies
+ig-unfollow-checker/
+├── insta.py           # Ana uygulama (GUI + Instagram mantığı)
+├── requirements.txt   # Python bağımlılıkları
+├── README.md          # Bu dosya
+└── .gitignore
 ```
 
-## Privacy & Security
+## �katkıda Bulun
 
-- Nothing in this project sends your credentials, cookies, or follower data to any third-party server. All requests go directly from your machine to Instagram's own servers (`instagram.com`).
-- The "Full Cookie" value is just as sensitive as your password — anyone who has it can access your account. Never paste it into a README, a GitHub issue, a public chat, or share it with anyone.
-- If you choose to save your session (so you don't have to log in every time), it's stored **locally** in a file next to the script. Don't commit this file to a public repository or share it with anyone (it's already excluded via `.gitignore`).
+1. Fork'la
+2. Branch oluştur (`git checkout -b feature/yen ozellik`)
+3. Değişikliklerini ekle (`git commit -m 'Yeni özellik ekle'`)
+4. Push et (`git push origin feature/yen ozellik`)
+5. PR aç
 
-## License
+## 📄 License
 
-MIT — use it, fork it, modify it. No warranty.
+MIT — kullan, fork et, değiştir. Garanti yoktur.
+
+---
+
+**Popüler Instagram araçları:**
+`#instagram` `#unfollow` `#python` `#tkinter` `#desktop-app` `#social-media` `#instagram-tools` `#follower-tracking` `#non-followers` `#privacy` `#open-source` `#cli` `#automation`
